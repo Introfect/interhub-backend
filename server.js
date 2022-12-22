@@ -1,6 +1,6 @@
 const app = require("express")();
 const server = require("http").createServer(app);
-import cors from "cors";
+const cors = require("cors");
 
 const io = require("socket.io")(server, {
 	cors: {
