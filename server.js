@@ -1,36 +1,35 @@
-const app = require("express")();
-const server = require("http").createServer(app);
-const cors = require("cors");
+var express = require('express');
 
-const io = require("socket.io")(server, {
-	cors: {
-		origin: "*",
-		methods: [ "GET", "POST" ]
-	}
-});
+var app = express();
+var server = app.listen(process.env.PORT || 3000);
 
-app.use(cors());
+app.use(express.static('public'));
 
-const PORT = process.env.PORT || 5000;
+console.log("My socket server is running");
 
-app.get('/', (req, res) => {
-	res.send('Running');
-});
+var socket = require('socket.io');
 
-io.on("connection", (socket) => {
-	socket.emit("me", socket.id);
+var io = socket(server);
 
-	socket.on("disconnect", () => {
-		socket.broadcast.emit("callEnded")
-	});
+io.sockets.on('connection', newConnection);
 
-	socket.on("callUser", ({ userToCall, signalData, from, name }) => {
-		io.to(userToCall).emit("callUser", { signal: signalData, from, name });
-	});
+function newConnection(socket) {
+    console.log('new connection: ' + socket.id);
+    var url = socket.handshake.headers.referer;
+    console.log(url.substring(27, url.length));
+    roomId = url.substring(27, url.length);
+    socket.join(roomId);
+    var roomId = '12345';
+    socket.on('create', function(room) {
+        // console.log(room);
+        socket.join(room);
+        roomId = room;
+    });
 
-	socket.on("answerCall", (data) => {
-		io.to(data.to).emit("callAccepted", data.signal)
-	});
-});
+    socket.on('mouse', mouseMsg);
 
-server.listen(PORT, () => console.log(`Server is running on port ${PORT}`));
+    function mouseMsg(data) {
+        socket.to(roomId).emit('mouse', data);
+        console.log(roomId);
+    }
+}
