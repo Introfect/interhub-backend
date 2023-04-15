@@ -14,10 +14,12 @@ var io = socket(server);
 io.sockets.on('connection', newConnection);
 
 function newConnection(socket) {
-    console.log('new connection: ' + socket.id);
-    var url = socket.handshake.headers.referer;
-    console.log(url.substring(27, url.length));
-    var roomId = url.substring(27, url.length);
+    // console.log('new connection: ' + socket.id);
+    // var url = socket.handshake.headers.referer;
+    // console.log(url.substring(27, url.length));
+    // var roomId = url.substring(27, url.length);
+    // console.log(roomId)
+    roomId=12345
     socket.join(roomId);
     socket.on('create', function(room) {
         console.log(room);
