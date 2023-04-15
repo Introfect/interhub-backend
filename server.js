@@ -17,11 +17,10 @@ function newConnection(socket) {
     console.log('new connection: ' + socket.id);
     var url = socket.handshake.headers.referer;
     console.log(url.substring(27, url.length));
-    roomId = url.substring(27, url.length);
+    var roomId = url.substring(27, url.length);
     socket.join(roomId);
-    var roomId = '12345';
     socket.on('create', function(room) {
-        // console.log(room);
+        console.log(room);
         socket.join(room);
         roomId = room;
     });
